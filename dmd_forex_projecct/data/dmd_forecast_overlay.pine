@@ -1,0 +1,31 @@
+//@version=5
+indicator("DMD Forecast Overlay", overlay=true)
+
+// این مقادیر را هر روز از فایل data/ohlc_forecast_log.csv کپی و اینجا (در Settings) پیست کنید
+// روز+۱ = دوشنبه 2026-11-09
+o1 = input.float(1.11779, "روز+1 Open (دوشنبه 2026-11-09)")
+h1 = input.float(1.12333, "روز+1 High (دوشنبه 2026-11-09)")
+l1 = input.float(1.11710, "روز+1 Low (دوشنبه 2026-11-09)")
+c1 = input.float(1.11778, "روز+1 Close (دوشنبه 2026-11-09)")
+
+n_bars_ahead = input.int(1, "چند کندل جلوتر")
+
+var line hi1 = na
+var line lo1 = na
+var box body1 = na
+var label lbl1 = na
+
+if barstate.islast
+    line.delete(hi1)
+    line.delete(lo1)
+    box.delete(body1)
+    label.delete(lbl1)
+
+    x1 = bar_index + n_bars_ahead
+
+    hi1 := line.new(x1, h1, x1, l1, color=color.new(color.blue, 0), width=1)
+    body1 := box.new(x1 - 1, math.max(o1, c1), x1 + 1, math.min(o1, c1),
+                       bgcolor=color.new(o1 <= c1 ? color.blue : color.orange, 60),
+                       border_color=color.blue)
+    lbl1 := label.new(x1, l1, "دوشنبه 2026-11-09", style=label.style_label_up,
+                        color=color.blue, textcolor=color.white, size=size.small)
